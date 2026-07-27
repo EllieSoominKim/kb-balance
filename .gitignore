@@ -1,0 +1,75 @@
+# ===== Node / Expo (app, admin-web 공용) =====
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+expo-env.d.ts
+
+# Metro
+.metro-health-check*
+
+# Native build artifacts
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Yarn / npm
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+.pnpm-debug.log*
+package-lock.json.bak
+
+# ===== Python / FastAPI (server) =====
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# SQLite DB (데모 데이터는 seed 스크립트로 재생성 가능하니 커밋 안 함)
+*.db
+*.sqlite
+*.sqlite3
+server/kb_balance.db
+
+# 환경변수/시크릿
+.env
+.env.local
+.env.*.local
+*.env
+
+# ===== 빌드/캐시 공통 =====
+.cache/
+.turbo/
+*.log
+logs/
+
+# ===== OS / 에디터 =====
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# ===== 대용량 모델/데이터 (필요 시 주석 해제) =====
+# FinBERT 등 사전학습 모델을 로컬에 다운로드해서 쓰는 경우 용량이 커서 커밋하면 안 됨
+**/*.bin
+**/*.safetensors
+**/pytorch_model.bin
+**/*.h5
+
+# ===== Next.js (admin-web, 추후 생성 시) =====
+admin-web/.next/
+admin-web/out/
+admin-web/node_modules/
+
+# 백업 폴더 (개발 중 임시로 만든 것)
+backup/
