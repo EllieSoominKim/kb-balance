@@ -77,3 +77,34 @@ export async function optimizeHrp(payload: HrpRequest): Promise<HrpResponse> {
   if (!res.ok) throw new Error(`HRP 최적화 실패: ${res.status}`);
   return res.json();
 }
+
+export type StressTestRequest = {
+  loan_amount: number;
+  loan_rate: number;
+  loan_years_left: number;
+  rate_shock_pp: number;
+  current_net_asset: number;
+  monthly_savings: number;
+  months?: number;
+  n_sims?: number;
+};
+
+export type StressTestResponse = {
+  current_monthly_payment: number;
+  stressed_monthly_payment: number;
+  monthly_payment_delta: number;
+  net_asset_after_months_base: number;
+  net_asset_after_months_stressed: number;
+  net_asset_delta: number;
+  simulation_paths: number[][];
+};
+
+export async function simulateStress(payload: StressTestRequest): Promise<StressTestResponse> {
+  const res = await fetch(`${API_BASE}/api/simulate/stress/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`스트레스 테스트 실패: ${res.status}`);
+  return res.json();
+}

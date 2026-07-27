@@ -17,14 +17,8 @@ export default function PersonaSelectScreen() {
       {personas.map((p) => (
         <Pressable
           key={p.id}
-          style={{
-            borderWidth: 1,
-            borderColor: "#e5e7eb",
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 12,
-          }}
-          onPress={() => router.push({ pathname: "/dashboard", params: { personaId: p.id } })}
+          style={{ borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 16, marginBottom: 12 }}
+          onPress={() => router.push({ pathname: "/connect", params: { personaId: p.id } })}
         >
           <Text style={{ fontWeight: "bold", fontSize: 16 }}>{p.name}</Text>
           <Text style={{ color: "#6b7280", fontSize: 14, marginTop: 4 }}>

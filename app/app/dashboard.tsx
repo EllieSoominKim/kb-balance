@@ -11,7 +11,7 @@ import { submitProfile, predictGarch, ProfileResponse, GarchResponse } from "../
 import { RiskGauge } from "../components/RiskGauge";
 
 export default function DashboardScreen() {
-  const { personaId } = useLocalSearchParams<{ personaId: string }>();
+  const { personaId, risk } = useLocalSearchParams<{ personaId: string; risk?: string }>();
   const router = useRouter();
   const persona = personas.find((p) => p.id === personaId);
 
@@ -35,7 +35,7 @@ export default function DashboardScreen() {
             loan_amount: persona.loanAmount,
             loan_rate: persona.loanRate,
             loan_type: persona.loanType,
-            self_reported_risk: persona.selfReportedRisk,
+            self_reported_risk: risk ? Number(risk) : persona.selfReportedRisk,
             goal: "여유자금 상환·투자 최적화",
             rebalance_frequency: "여유자금 생길 때마다",
           }),
@@ -156,12 +156,12 @@ export default function DashboardScreen() {
         )}
       </View>
 
-      {/* 추천 배분 보기 버튼 */}
+      {/* 시뮬레이션 보기 버튼 */}
       <Pressable
         style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 16, alignItems: "center", marginBottom: 40 }}
-        onPress={() => router.push({ pathname: "/allocation", params: { personaId } })}
+        onPress={() => router.push({ pathname: "/simulation", params: { personaId } })}
       >
-        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>추천 배분 보기</Text>
+        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>시뮬레이션 보기</Text>
       </Pressable>
     </ScrollView>
   );
