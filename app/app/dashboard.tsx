@@ -11,6 +11,23 @@ import {
 import { submitProfile, predictGarch, ProfileResponse, GarchResponse } from "../lib/api";
 import { RiskGauge } from "../components/RiskGauge";
 
+function summarizeSentiment(scores: number[]) {
+  const positive = scores.filter((s) => s > 0.15).length;
+  const negative = scores.filter((s) => s < -0.15).length;
+  const neutral = scores.length - positive - negative;
+  const total = scores.length;
+  const mean = scores.reduce((a, b) => a + b, 0) / total;
+  const variance = scores.reduce((a, b) => a + (b - mean) ** 2, 0) / total;
+  const std = Math.sqrt(variance);
+  const disagreement = std > 0.25 ? "높음" : std > 0.12 ? "보통" : "낮음";
+  return {
+    positivePct: Math.round((positive / total) * 100),
+    neutralPct: Math.round((neutral / total) * 100),
+    negativePct: Math.round((negative / total) * 100),
+    disagreement,
+  };
+}
+
 export default function DashboardScreen() {
   const { personaId, risk } = useLocalSearchParams<{ personaId: string; risk?: string }>();
   const router = useRouter();
@@ -91,6 +108,7 @@ export default function DashboardScreen() {
   const totalForBar = totalAsset + persona.loanAmount || 1;
   const assetBarPct = (totalAsset / totalForBar) * 100;
   const loanBarPct = (persona.loanAmount / totalForBar) * 100;
+  const sentiment = summarizeSentiment(dummyNewsSentiment);
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
@@ -162,20 +180,20 @@ export default function DashboardScreen() {
         )}
       </View>
 
-      {/* 뉴스 감성 요약 카드 (현재 더미 값, 추후 뉴스 API 연동 시 교체) */}
+      {/* 뉴스 감성 요약 카드 — dummyNewsSentiment 배열을 실제로 집계 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
         <Text style={{ color: "#6b7280", marginBottom: 8 }}>뉴스 감성 요약 (최근 7일)</Text>
         <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 12 }}>
-          긍정 45% · 중립 35% · 부정 20%
+          긍정 {sentiment.positivePct}% · 중립 {sentiment.neutralPct}% · 부정 {sentiment.negativePct}%
         </Text>
         <View style={{ flexDirection: "row", height: 8, borderRadius: 4, overflow: "hidden", marginBottom: 12 }}>
-          <View style={{ flex: 45, backgroundColor: "#22c55e" }} />
-          <View style={{ flex: 35, backgroundColor: "#d1d5db" }} />
-          <View style={{ flex: 20, backgroundColor: "#ef4444" }} />
+          <View style={{ flex: sentiment.positivePct || 1, backgroundColor: "#22c55e" }} />
+          <View style={{ flex: sentiment.neutralPct || 1, backgroundColor: "#d1d5db" }} />
+          <View style={{ flex: sentiment.negativePct || 1, backgroundColor: "#ef4444" }} />
         </View>
         <View style={{ backgroundColor: "#f3f4f6", borderRadius: 8, padding: 12 }}>
           <Text style={{ fontSize: 13, color: "#4b5563" }}>
-            불일치도: 보통 — 금리 인상 전망을 두고 긍정·부정 논조가 혼재되어 있습니다.
+            불일치도: {sentiment.disagreement} — 뉴스 논조 표준편차 기반으로 산출한 값이에요.
           </Text>
         </View>
       </View>

@@ -12,6 +12,9 @@ export default function SimulationScreen() {
   const persona = personas.find((p) => p.id === personaId);
 
   const [rateShock, setRateShock] = useState(1.0);
+  const currentNetAsset = persona
+    ? persona.deposit + persona.investment - persona.loanAmount
+    : 0;
   const [result, setResult] = useState<StressTestResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,6 +115,10 @@ export default function SimulationScreen() {
 
           <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
             <Text style={{ color: "#6b7280", marginBottom: 4 }}>24개월 후 순자산 변화</Text>
+            <Text style={{ fontSize: 15, color: "#9ca3af", marginBottom: 4 }}>
+              현재 {currentNetAsset < 0 ? "-" : ""}
+              {Math.abs(Math.round(currentNetAsset / 10000)).toLocaleString()}만원 →
+            </Text>
             <Text style={{ fontSize: 24, fontWeight: "bold" }}>
               {Math.round(result.net_asset_after_months_stressed / 10000).toLocaleString()}만원
             </Text>
