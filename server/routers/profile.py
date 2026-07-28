@@ -45,14 +45,16 @@ class ProfileResponse(BaseModel):
 def create_profile(req: ProfileRequest, session: Session = Depends(get_session)):
     monthly_loan_payment = 0
     if req.loan_amount > 0 and req.loan_rate:
-        # 단순화된 월 상환액 추정 (원리금균등 근사 대신 이자만 반영한 러프 추정)
         monthly_loan_payment = req.loan_amount * (req.loan_rate / 12)
+
+    net_asset = req.deposit + req.investment - req.loan_amount
 
     result = calibrate_risk(
         self_reported_grade=req.self_reported_risk,
         monthly_income=req.monthly_income,
         monthly_fixed_expense=req.monthly_fixed_expense,
         monthly_loan_payment=monthly_loan_payment,
+        net_asset=net_asset,
     )
 
     profile = UserProfile(

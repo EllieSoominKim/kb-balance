@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import predict, optimize, profile, simulate, admin
+from routers import predict, optimize, profile, simulate, admin, history, market
 from db.database import init_db
 
 app = FastAPI(title="KB 밸런스 API")
@@ -17,6 +17,8 @@ app.include_router(admin.router, prefix="/api/admin/risk-summary", tags=["admin"
 app.include_router(optimize.router, prefix="/api/optimize/hrp", tags=["optimize"])
 app.include_router(profile.router, prefix="/api/profile", tags=["profile"])
 app.include_router(simulate.router, prefix="/api/simulate/stress", tags=["simulate"])
+app.include_router(history.router, prefix="/api/history", tags=["history"])
+app.include_router(market.router, prefix="/api/market", tags=["market"])
 
 @app.on_event("startup")
 def on_startup():

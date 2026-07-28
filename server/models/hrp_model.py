@@ -177,7 +177,7 @@ def run_hrp(
     hike_probability: float = 0.0,
     rate_volatility: float = None,
 ) -> dict:
-    """5단계 전체 파이프라인 실행, 최종 배분(dict) 반환"""
+    """5단계 전체 파이프라인 실행, 최종 배분 + 진단 정보 반환"""
     return_matrix = build_return_matrix(asset_returns, loan_rate, rate_volatility)
     corr, link = cluster_assets(return_matrix)
     sort_ix = _get_quasi_diag(link)
@@ -188,4 +188,14 @@ def run_hrp(
     final_weights = adjust_for_rate_scenario(raw_weights, hike_probability)
 
     final_weights_dict = final_weights.round(4).to_dict()
-    return apply_allocation_bounds(final_weights_dict)
+    bounded = apply_allocation_bounds(final_weights_dict)
+
+    # 대출상환과 투자자산의 실제 상관계수 (있을 때만)
+    loan_investment_corr = None
+    if "대출상환" in corr.index and "투자자산" in corr.columns:
+        loan_investment_corr = round(float(corr.loc["대출상환", "투자자산"]), 3)
+
+    return {
+        "weights": bounded,
+        "loan_investment_correlation": loan_investment_corr,
+    }

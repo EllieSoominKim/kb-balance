@@ -25,6 +25,7 @@ class HrpOptimizeRequest(BaseModel):
 
 class HrpOptimizeResponse(BaseModel):
     allocation: dict[str, float]
+    loan_investment_correlation: float | None = None
 
 
 @router.post("/", response_model=HrpOptimizeResponse)
@@ -38,11 +39,14 @@ def optimize_hrp(req: HrpOptimizeRequest):
         req.rate_volatility / 100 if req.rate_volatility is not None else None
     )
 
-    allocation = run_hrp(
+    result = run_hrp(
         asset_returns,
         loan_rate=req.loan_rate,
         hike_probability=req.hike_probability,
         rate_volatility=rate_vol_scaled,
     )
 
-    return HrpOptimizeResponse(allocation=allocation)
+    return HrpOptimizeResponse(
+        allocation=result["weights"],
+        loan_investment_correlation=result["loan_investment_correlation"],
+    )
