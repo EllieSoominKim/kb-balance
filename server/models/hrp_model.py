@@ -22,14 +22,12 @@ def build_return_matrix(
     """
     1단계: 자산 수익률 + 대출 상환을 단일 매트릭스로 결합
     loan_rate: 연 대출금리(예: 0.042). 대출이 없으면 None
-    rate_volatility: GARCH-X가 예측한 월별 금리 변동성. 변동금리 대출의 상환 효과가
-                      금리 변동에 따라 흔들리는 정도를 반영 (없으면 예금 수준의 기본값 사용)
+    rate_volatility: GARCH-X가 예측한 월별 금리 변동성.
     """
     matrix = asset_returns.copy()
     if loan_rate is not None:
         n = len(matrix)
         base = -loan_rate / 12
-        # rate_volatility가 없으면 예금과 비슷한 스케일의 기본 노이즈 사용 (데모/고정금리 대출용)
         noise_std = rate_volatility if rate_volatility is not None else 0.0015
         noise = np.random.normal(0, noise_std, n)
         matrix["대출상환"] = base + noise
@@ -44,7 +42,7 @@ def cluster_assets(return_matrix: pd.DataFrame):
     """2단계: 상관관계 계층 클러스터링"""
     corr = return_matrix.corr()
     dist = _correlation_distance(corr)
-    condensed = squareform(dist.values, checks=False)  # 정사각형 -> 압축형 변환
+    condensed = squareform(dist.values, checks=False)
     link = linkage(condensed, method="single")
     return corr, link
 
@@ -107,16 +105,14 @@ def adjust_for_rate_scenario(
 ) -> pd.Series:
     """
     4단계 ★ 독창성 핵심: GARCH-X의 금리 인상 확률로 가중치 보정
-    hike_probability가 높을수록 상환(loan_key) 비중을 끌어올림
     """
     if loan_key not in weights.index:
-        return weights  # 대출이 없는 페르소나는 보정 스킵
+        return weights
 
     adjusted = weights.copy()
     boost = hike_probability * sensitivity
     adjusted[loan_key] += boost
 
-    # 나머지 자산에서 비례 차감 후 정규화
     others = adjusted.index.difference([loan_key])
     if adjusted[others].sum() > 0:
         scale = (1 - adjusted[loan_key]) / adjusted[others].sum()
@@ -132,14 +128,47 @@ def apply_allocation_bounds(
     max_weight: float = 0.7,
 ) -> dict:
     """
-    각 자산군에 최소/최대 비중 캡을 적용해 극단적 쏠림을 방지.
-    HRP는 수학적으로 저분산 자산에 쏠리기 쉬운데, 실사용자 화면에서는
-    한 자산군이 0%나 100%에 가깝게 나오면 부자연스럽고 서비스 신뢰도를 해치므로
-    실무적 제약조건(상하한선)을 둔다.
+    각 자산군에 최소/최대 비중 캡을 적용. 단순 clip+재정규화는 한 자산이 캡에
+    걸려도 나머지 비중이 그대로 남아 여전히 쏠릴 수 있으므로, 캡 초과분을
+    다른 자산에 반복적으로(iterative water-filling) 재분배한다.
     """
-    adjusted = {k: max(min(v, max_weight), min_weight) for k, v in weights.items()}
-    total = sum(adjusted.values())
-    return {k: round(v / total, 4) for k, v in adjusted.items()}
+    keys = list(weights.keys())
+    vals = dict(weights)
+    fixed: dict = {}
+    free = set(keys)
+
+    for _ in range(len(keys)):
+        remaining = 1 - sum(fixed.values())
+        free_keys = list(free)
+        if not free_keys:
+            break
+
+        free_sum = sum(vals[k] for k in free_keys)
+        if free_sum == 0:
+            for k in free_keys:
+                vals[k] = remaining / len(free_keys)
+        else:
+            for k in free_keys:
+                vals[k] = vals[k] / free_sum * remaining
+
+        violated = False
+        for k in list(free):
+            if vals[k] > max_weight:
+                vals[k] = max_weight
+                fixed[k] = max_weight
+                free.remove(k)
+                violated = True
+            elif vals[k] < min_weight:
+                vals[k] = min_weight
+                fixed[k] = min_weight
+                free.remove(k)
+                violated = True
+
+        if not violated:
+            break
+
+    result = {**fixed, **{k: vals[k] for k in free}}
+    return {k: round(result[k], 4) for k in keys}
 
 
 def run_hrp(

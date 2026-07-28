@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, ActivityIndicator, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { LineChart } from "../components/LineChart";
 import {
   personas,
   dummyRateHistory,
@@ -135,11 +136,16 @@ export default function DashboardScreen() {
       </View>
 
       {/* 실시간 금리 신호 카드 */}
-      <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
+      <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
         <Text style={{ color: "#6b7280", marginBottom: 8 }}>실시간 금리 신호 (ECOS · GARCH-X)</Text>
         <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
           변동성 {garch!.next_month_volatility.toFixed(3)}
         </Text>
+
+        <View style={{ alignItems: "center", marginVertical: 12 }}>
+          <LineChart basePath={dummyRateHistory} stressedPath={dummyRateHistory} width={280} height={100} />
+        </View>
+
         <View style={{ backgroundColor: "#fef3c7", borderRadius: 8, padding: 12 }}>
           <Text style={{ fontSize: 13, color: "#78350f" }}>
             3개월 내 0.25%p 추가 인상 가능성 {(garch!.hike_probability * 100).toFixed(0)}%로 예측됩니다.
@@ -154,6 +160,24 @@ export default function DashboardScreen() {
             예·적금·채권형 상품 기대수익이 높아질 수 있어요
           </Text>
         )}
+      </View>
+
+      {/* 뉴스 감성 요약 카드 (현재 더미 값, 추후 뉴스 API 연동 시 교체) */}
+      <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
+        <Text style={{ color: "#6b7280", marginBottom: 8 }}>뉴스 감성 요약 (최근 7일)</Text>
+        <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 12 }}>
+          긍정 45% · 중립 35% · 부정 20%
+        </Text>
+        <View style={{ flexDirection: "row", height: 8, borderRadius: 4, overflow: "hidden", marginBottom: 12 }}>
+          <View style={{ flex: 45, backgroundColor: "#22c55e" }} />
+          <View style={{ flex: 35, backgroundColor: "#d1d5db" }} />
+          <View style={{ flex: 20, backgroundColor: "#ef4444" }} />
+        </View>
+        <View style={{ backgroundColor: "#f3f4f6", borderRadius: 8, padding: 12 }}>
+          <Text style={{ fontSize: 13, color: "#4b5563" }}>
+            불일치도: 보통 — 금리 인상 전망을 두고 긍정·부정 논조가 혼재되어 있습니다.
+          </Text>
+        </View>
       </View>
 
       {/* 시뮬레이션 보기 버튼 */}
