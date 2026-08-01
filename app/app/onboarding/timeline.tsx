@@ -12,18 +12,20 @@ export default function TimelineScreen() {
   const isOptimizeGoal = goal === "여유자금 상환·투자 최적화";
 
   const [years, setYears] = useState(10);
-  const [frequency, setFrequency] = useState(FREQUENCIES[0]);
+  const [frequency, setFrequency] = useState<string | null>(null);
 
   const yearsLabel = years >= 30 ? "30년+" : years === 0 ? "즉시" : `${years}년`;
+  const canProceed = isOptimizeGoal ? frequency !== null : true;
 
   const finish = () => {
+    if (!canProceed) return;
     router.push({
       pathname: "/dashboard",
       params: {
         personaId,
         risk,
         goal,
-        horizonOrFrequency: isOptimizeGoal ? frequency : yearsLabel,
+        horizonOrFrequency: isOptimizeGoal ? frequency! : yearsLabel,
       },
     });
   };
@@ -106,8 +108,9 @@ export default function TimelineScreen() {
             </View>
           </View>
           <Text style={{ color: "#6b7280", fontSize: 14, lineHeight: 22 }}>
-            <Text style={{ color: "#6b7280" }}>*  </Text>
+            <Text style={{ color: "#6b7280" }}>* </Text>
             목표 기한이 짧을수록 유동성 높은 저축 중심으로, 길수록 복리 효과를 누리는 투자 비중을 늘려요
+
           </Text>
         </>
       )}
@@ -135,10 +138,16 @@ export default function TimelineScreen() {
           <Text style={{ fontWeight: "bold" }}>이전</Text>
         </Pressable>
         <Pressable
-          style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 32 }}
+          disabled={!canProceed}
+          style={{
+            backgroundColor: canProceed ? "#fbbf24" : "#e5e7eb",
+            borderRadius: 12,
+            paddingVertical: 14,
+            paddingHorizontal: 32,
+          }}
           onPress={finish}
         >
-          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>완료</Text>
+          <Text style={{ fontWeight: "bold", color: canProceed ? "#1f2937" : "#9ca3af" }}>완료</Text>
         </Pressable>
       </View>
     </View>

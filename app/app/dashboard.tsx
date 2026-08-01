@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, ActivityIndicator, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { LineChart } from "../components/LineChart";
+import { SingleLineChart } from "../components/SingleLineChart";
 import { Header } from "../components/Header";
 import { NavBar } from "../components/NavBar";
 import {
@@ -99,7 +99,7 @@ export default function DashboardScreen() {
         setGarch(garchResult);
       } catch (e) {
         console.error(e);
-        setError("데이터를 불러오지 못했어요. 서버 연결을 확인해주세요.");
+        setError("데이터를 불러오지 못했어요. 서버 연결을 확인해주세요");
       } finally {
         setLoading(false);
       }
@@ -146,7 +146,7 @@ export default function DashboardScreen() {
       <NavBar active="dashboard" personaId={personaId} goal={goal} onBack={() => router.push({ pathname: "/onboarding/timeline", params: { personaId, risk, goal } })} />
 
       <Text style={{ color: "#6b7280", marginBottom: 4 }}>{persona.name}님, 오늘의 자산 현황이에요</Text>
-      <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>자산 대시보드</Text>
+      <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 15 }}>자산 대시보드</Text>
 
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
         <Text style={{ color: "#6b7280", marginBottom: 4 }}>순자산 (자산 - 부채)</Text>
@@ -169,7 +169,7 @@ export default function DashboardScreen() {
         <Text style={{ color: "#6b7280", marginBottom: 12 }}>리스크 스코어</Text>
         <RiskGauge level={profile!.calibrated_risk} />
 
-        {profile!.adjusted && (
+        {profile!.adjusted ? (
           <View style={{ marginTop: 12 }}>
             <Text style={{ fontSize: 13, color: "#6b7280" }}>
               자기 응답: {profile!.self_reported_risk}/5
@@ -181,6 +181,12 @@ export default function DashboardScreen() {
               <Text style={{ fontSize: 13, color: "#78350f" }}>{profile!.calibration_reason}</Text>
             </View>
           </View>
+        ) : (
+          <View style={{ backgroundColor: "#f3f4f6", borderRadius: 8, padding: 10, marginTop: 12 }}>
+            <Text style={{ fontSize: 13, color: "#6b7280" }}>
+              재무 데이터를 검토했지만 자기 응답과 일치해, 보정 없이 그대로 반영했어요
+            </Text>
+          </View>
         )}
       </View>
 
@@ -191,21 +197,21 @@ export default function DashboardScreen() {
         </Text>
 
         <View style={{ alignItems: "center", marginVertical: 12 }}>
-          <LineChart basePath={rateHistory} stressedPath={rateHistory} width={280} height={100} />
+          <SingleLineChart data={rateHistory} width={280} height={100} />
         </View>
 
         <View style={{ backgroundColor: "#fef3c7", borderRadius: 8, padding: 12 }}>
           <Text style={{ fontSize: 13, color: "#78350f" }}>
-            3개월 내 0.25%p 추가 인상 가능성 {(garch!.hike_probability * 100).toFixed(0)}%로 예측됩니다.
+            3개월 내 0.25%p 추가 인상 가능성 {(garch!.hike_probability * 100).toFixed(0)}%로 예측됩니다
           </Text>
         </View>
         {persona.loanAmount > 0 ? (
           <Text style={{ fontSize: 13, color: "#6b7280", marginTop: 8 }}>
-            변동금리 대출 상환부담이 커질 수 있어요
+            * 변동금리 대출 상환부담이 커질 수 있어요
           </Text>
         ) : (
           <Text style={{ fontSize: 13, color: "#6b7280", marginTop: 8 }}>
-            예·적금·채권형 상품 기대수익이 높아질 수 있어요
+            * 예·적금·채권형 상품 기대수익이 높아질 수 있어요
           </Text>
         )}
       </View>
@@ -222,17 +228,17 @@ export default function DashboardScreen() {
         </View>
         <View style={{ backgroundColor: "#f3f4f6", borderRadius: 8, padding: 12 }}>
           <Text style={{ fontSize: 13, color: "#4b5563" }}>
-            불일치도: {sentiment.disagreement} — 뉴스 논조 표준편차 기반으로 산출한 값이에요.
+            불일치도: <Text style={{ fontWeight: "bold" }}>{sentiment.disagreement}</Text> — 뉴스 논조 표준편차 기반으로 산출한 값이에요
           </Text>
         </View>
       </View>
 
       <View style={{ flexDirection: "row", justifyContent: "flex-end", marginBottom: 40 }}>
         <Pressable
-          style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 28 }}
+          style={{ backgroundColor: "#f3f4f6", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 28 }}
           onPress={() => router.push({ pathname: "/simulation", params: { personaId, goal } })}
         >
-          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>시뮬레이션 보기 →</Text>
+          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>시뮬레이션 ▶</Text>
         </Pressable>
       </View>
     </ScrollView>

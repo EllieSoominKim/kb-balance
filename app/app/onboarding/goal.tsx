@@ -18,7 +18,9 @@ const GOALS = [
 export default function GoalScreen() {
   const { personaId, risk } = useLocalSearchParams<{ personaId: string; risk: string }>();
   const router = useRouter();
-  const [selected, setSelected] = useState("optimize");
+  const [selected, setSelected] = useState<string | null>(null);
+
+  const canProceed = selected !== null;
 
   return (
     <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
@@ -90,7 +92,13 @@ export default function GoalScreen() {
           <Text style={{ fontWeight: "bold" }}>이전</Text>
         </Pressable>
         <Pressable
-          style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 32 }}
+          disabled={!canProceed}
+          style={{
+            backgroundColor: canProceed ? "#fbbf24" : "#e5e7eb",
+            borderRadius: 12,
+            paddingVertical: 14,
+            paddingHorizontal: 32,
+          }}
           onPress={() => {
             const selectedLabel = GOALS.find((g) => g.key === selected)?.label ?? selected;
             router.push({
@@ -99,7 +107,7 @@ export default function GoalScreen() {
             });
           }}
         >
-          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>다음</Text>
+          <Text style={{ fontWeight: "bold", color: canProceed ? "#1f2937" : "#9ca3af" }}>다음</Text>
         </Pressable>
       </View>
     </View>

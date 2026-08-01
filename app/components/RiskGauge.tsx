@@ -2,18 +2,21 @@ import { View, Text } from "react-native";
 
 const LEVEL_LABELS = ["안전형", "안정추구형", "중립형", "성장추구형", "공격형"];
 
+const LEVEL_COLORS = ["#fef3c7", "#fde68a", "#fcd34d", "#fbbf24", "#f59e0b"];
+const LEVEL_HEIGHTS = [20, 24, 30, 36, 44];
+
 export function RiskGauge({ level }: { level: number }) {
   return (
     <View>
-      <View style={{ flexDirection: "row", gap: 6, marginBottom: 8 }}>
+      <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 6, marginBottom: 8 }}>
         {[1, 2, 3, 4, 5].map((i) => (
           <View
             key={i}
             style={{
               flex: 1,
-              height: 24,
-              borderRadius: 6,
-              backgroundColor: i <= level ? "#fbbf24" : "#e5e7eb",
+              height: LEVEL_HEIGHTS[i - 1],
+              borderRadius: 8,
+              backgroundColor: i <= level ? LEVEL_COLORS[i - 1] : "#e5e7eb",
             }}
           />
         ))}

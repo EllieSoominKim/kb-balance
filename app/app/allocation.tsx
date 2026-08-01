@@ -285,7 +285,7 @@ export default function AllocationScreen() {
       <NavBar active="allocation" personaId={personaId} goal={goal} onBack={() => router.push({ pathname: "/simulation", params: { personaId, goal } })} />
 
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 4 }}>추천 자산 배분</Text>
-      <Text style={{ color: "#6b7280", marginBottom: 24 }}>
+      <Text style={{ color: "#6b7280", marginBottom: 15 }}>
         {persona.name}님께 맞춘 상환·저축·투자 비율이에요
       </Text>
 
@@ -395,7 +395,7 @@ export default function AllocationScreen() {
           style={{ backgroundColor: "#f3f4f6", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24 }}
           onPress={() => router.back()}
         >
-          <Text style={{ fontWeight: "bold" }}>이전</Text>
+          <Text style={{ fontWeight: "bold" }}>◀ 시뮬레이션</Text>
         </Pressable>
         <Pressable
           style={{ backgroundColor: "#f3f4f6", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24 }}

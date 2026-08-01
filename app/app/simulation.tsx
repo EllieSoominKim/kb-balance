@@ -70,7 +70,7 @@ export default function SimulationScreen() {
       <NavBar active="simulation" personaId={personaId} goal={goal} onBack={() => router.push({ pathname: "/dashboard", params: { personaId, goal } })} />
 
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 4 }}>금리 스트레스 테스트</Text>
-      <Text style={{ color: "#6b7280", marginBottom: 24 }}>
+      <Text style={{ color: "#6b7280", marginBottom: 15 }}>
         기준금리가 상승할 경우 부담 변화를 확인해 보세요.
       </Text>
 
@@ -107,33 +107,45 @@ export default function SimulationScreen() {
       {!loading && result && (
         <>
           <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
-            <Text style={{ color: "#6b7280", marginBottom: 4 }}>월 상환부담 변화</Text>
-            <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-              {Math.round(result.stressed_monthly_payment / 10000).toLocaleString()}만원{" "}
-              <Text style={{ color: "#ef4444", fontSize: 16 }}>
-                (+{Math.round(result.monthly_payment_delta / 10000).toLocaleString()}만원)
+            <Text style={{ color: "#6b7280", marginBottom: 8 }}>월 상환부담 변화</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ fontSize: 28, fontWeight: "bold" }}>
+                {Math.round(result.stressed_monthly_payment / 10000).toLocaleString()}만원
               </Text>
-            </Text>
-            <Text style={{ fontSize: 13, color: "#9ca3af", marginTop: 4 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", marginLeft: 10 }}>
+                <Text style={{ color: "#ef4444", fontSize: 16, fontWeight: "bold" }}>▲</Text>
+                <Text style={{ color: "#ef4444", fontSize: 16, fontWeight: "bold", marginLeft: 4 }}>
+                  {Math.round(result.monthly_payment_delta / 10000).toLocaleString()}만원
+                </Text>
+              </View>
+            </View>
+            <Text style={{ fontSize: 14, color: "#9ca3af", marginTop: 8 }}>
               기존 {Math.round(result.current_monthly_payment / 10000).toLocaleString()}만원 → 변경 후 예상
             </Text>
           </View>
 
           <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
-            <Text style={{ color: "#6b7280", marginBottom: 4 }}>24개월 후 순자산 변화</Text>
-            <Text style={{ fontSize: 15, color: "#9ca3af", marginBottom: 4 }}>
-              현재 {currentNetAsset < 0 ? "-" : ""}
-              {Math.abs(Math.round(currentNetAsset / 10000)).toLocaleString()}만원 →
-            </Text>
-            <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-              {Math.round(result.net_asset_after_months_stressed / 10000).toLocaleString()}만원
-            </Text>
-            <Text style={{ fontSize: 13, color: "#3b82f6", marginTop: 4 }}>
-              스트레스 시나리오 미적용 대비 {Math.round(result.net_asset_delta / 10000).toLocaleString()}만원
+            <Text style={{ color: "#6b7280", marginBottom: 8 }}>24개월 후 순자산 변화</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={{ fontSize: 28, fontWeight: "bold" }}>
+                {result.net_asset_after_months_stressed < 0 ? "-" : ""}
+                {Math.abs(Math.round(result.net_asset_after_months_stressed / 10000)).toLocaleString()}만원
+              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", marginLeft: 10 }}>
+                <Text style={{ color: "#3b82f6", fontSize: 16, fontWeight: "bold" }}>
+                  {result.net_asset_delta < 0 ? "▼" : "▲"}
+                </Text>
+                <Text style={{ color: "#3b82f6", fontSize: 16, fontWeight: "bold", marginLeft: 4 }}>
+                  {Math.abs(Math.round(result.net_asset_delta / 10000)).toLocaleString()}만원
+                </Text>
+              </View>
+            </View>
+            <Text style={{ fontSize: 14, color: "#9ca3af", marginTop: 8 }}>
+              스트레스 시나리오 미적용 대비
             </Text>
           </View>
 
-          <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
+          <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
             <Text style={{ color: "#6b7280", marginBottom: 12 }}>순자산 시뮬레이션 (몬테카를로, 24개월)</Text>
             <View style={{ alignItems: "center" }}>
               <LineChart basePath={result.simulation_paths[0]} stressedPath={result.simulation_paths[1]} />
@@ -150,12 +162,18 @@ export default function SimulationScreen() {
             </View>
           </View>
 
-          <View style={{ flexDirection: "row", justifyContent: "flex-end", marginBottom: 40 }}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 40 }}>
             <Pressable
-              style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 28 }}
+              style={{ backgroundColor: "#f3f4f6", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24 }}
+              onPress={() => router.push({ pathname: "/dashboard", params: { personaId, goal } })}
+            >
+              <Text style={{ fontWeight: "bold" }}>{"◀ 대시보드"}</Text>
+            </Pressable>
+            <Pressable
+              style={{ backgroundColor: "#f3f4f6", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24 }}
               onPress={() => router.push({ pathname: "/allocation", params: { personaId, goal } })}
             >
-              <Text style={{ fontWeight: "bold", color: "#1f2937" }}>추천 배분 보기 →</Text>
+              <Text style={{ fontWeight: "bold" }}>추천 배분 ▶</Text>
             </Pressable>
           </View>
         </>
