@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { LineChart } from "../components/LineChart";
 import { Header } from "../components/Header";
+import { NavBar } from "../components/NavBar";
 import {
   personas,
   dummyRateHistory,
@@ -142,11 +143,11 @@ export default function DashboardScreen() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
       <Header />
+      <NavBar active="dashboard" personaId={personaId} goal={goal} onBack={() => router.push({ pathname: "/onboarding/timeline", params: { personaId, risk, goal } })} />
 
       <Text style={{ color: "#6b7280", marginBottom: 4 }}>{persona.name}님, 오늘의 자산 현황이에요</Text>
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>자산 대시보드</Text>
 
-      {/* 순자산 카드 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
         <Text style={{ color: "#6b7280", marginBottom: 4 }}>순자산 (자산 - 부채)</Text>
         <Text style={{ fontSize: 28, fontWeight: "bold", color: netAsset < 0 ? "#ef4444" : "#111827", marginBottom: 16 }}>
@@ -164,7 +165,6 @@ export default function DashboardScreen() {
         </View>
       </View>
 
-      {/* 리스크 스코어 카드 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
         <Text style={{ color: "#6b7280", marginBottom: 12 }}>리스크 스코어</Text>
         <RiskGauge level={profile!.calibrated_risk} />
@@ -184,7 +184,6 @@ export default function DashboardScreen() {
         )}
       </View>
 
-      {/* 실시간 금리 신호 카드 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 16 }}>
         <Text style={{ color: "#6b7280", marginBottom: 8 }}>실시간 금리 신호 (ECOS · GARCH-X)</Text>
         <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
@@ -211,7 +210,6 @@ export default function DashboardScreen() {
         )}
       </View>
 
-      {/* 뉴스 감성 요약 카드 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
         <Text style={{ color: "#6b7280", marginBottom: 8 }}>뉴스 감성 요약 (최근 7일)</Text>
         <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 12 }}>
@@ -229,13 +227,14 @@ export default function DashboardScreen() {
         </View>
       </View>
 
-      {/* 시뮬레이션 보기 버튼 */}
-      <Pressable
-        style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 16, alignItems: "center", marginBottom: 40 }}
-        onPress={() => router.push({ pathname: "/simulation", params: { personaId, goal } })}
-      >
-        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>시뮬레이션 보기</Text>
-      </Pressable>
+      <View style={{ flexDirection: "row", justifyContent: "flex-end", marginBottom: 40 }}>
+        <Pressable
+          style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 28 }}
+          onPress={() => router.push({ pathname: "/simulation", params: { personaId, goal } })}
+        >
+          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>시뮬레이션 보기 →</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }

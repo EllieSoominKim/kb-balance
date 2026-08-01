@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, ActivityIndicator, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { NavBar } from "../components/NavBar";
 import { PieChart } from "../components/PieChart";
 import { Header } from "../components/Header";
 import {
@@ -281,6 +282,7 @@ export default function AllocationScreen() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
       <Header />
+      <NavBar active="allocation" personaId={personaId} goal={goal} onBack={() => router.push({ pathname: "/simulation", params: { personaId, goal } })} />
 
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 4 }}>추천 자산 배분</Text>
       <Text style={{ color: "#6b7280", marginBottom: 24 }}>

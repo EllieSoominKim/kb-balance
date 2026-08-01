@@ -6,6 +6,7 @@ import { personas } from "../data/personas";
 import { simulateStress, StressTestResponse } from "../lib/api";
 import { LineChart } from "../components/LineChart";
 import { Header } from "../components/Header";
+import { NavBar } from "../components/NavBar";
 
 export default function SimulationScreen() {
   const { personaId, goal } = useLocalSearchParams<{ personaId: string; goal?: string }>();
@@ -66,6 +67,7 @@ export default function SimulationScreen() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
       <Header />
+      <NavBar active="simulation" personaId={personaId} goal={goal} onBack={() => router.push({ pathname: "/dashboard", params: { personaId, goal } })} />
 
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 4 }}>금리 스트레스 테스트</Text>
       <Text style={{ color: "#6b7280", marginBottom: 24 }}>
@@ -148,12 +150,14 @@ export default function SimulationScreen() {
             </View>
           </View>
 
-          <Pressable
-            style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 16, alignItems: "center", marginBottom: 40 }}
-            onPress={() => router.push({ pathname: "/allocation", params: { personaId, goal } })}
-          >
-            <Text style={{ fontWeight: "bold", color: "#1f2937" }}>추천 배분 보기</Text>
-          </Pressable>
+          <View style={{ flexDirection: "row", justifyContent: "flex-end", marginBottom: 40 }}>
+            <Pressable
+              style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 28 }}
+              onPress={() => router.push({ pathname: "/allocation", params: { personaId, goal } })}
+            >
+              <Text style={{ fontWeight: "bold", color: "#1f2937" }}>추천 배분 보기 →</Text>
+            </Pressable>
+          </View>
         </>
       )}
     </ScrollView>
