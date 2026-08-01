@@ -26,7 +26,7 @@ export default function IntroScreen() {
           계좌를 연결하고 시작하세요
         </Text>
         <Text style={{ color: "#6b7280", textAlign: "center", marginBottom: 24, fontSize: 17 }}>
-          자산·부채·소득을 한 번에 불러와{"\n"}맞춤 리스크 진단을 시작합니다.
+          자산·부채·소득을 한 번에 불러와{"\n"}맞춤 리스크 진단을 시작합니다
         </Text>
 
         {features.map((f) => (

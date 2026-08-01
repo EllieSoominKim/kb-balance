@@ -80,7 +80,7 @@ export default function ConnectScreen() {
 
       <View style={{ backgroundColor: "#f3f4f6", borderRadius: 12, padding: 16, marginBottom: 20 }}>
         <Text style={{ color: "#6b7280", fontSize: 14, lineHeight: 20 }}>
-          업권을 선택하면 해당 업권의 연결 가능한 금융회사가 자동으로 포함돼요.
+          업권을 선택하면 해당 업권의 연결 가능한 금융회사가 자동으로 포함돼요
         </Text>
       </View>
 

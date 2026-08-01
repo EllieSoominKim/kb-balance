@@ -38,7 +38,7 @@ export default function PersonaSelectScreen() {
       <View style={{ backgroundColor: "#f3f4f6", borderRadius: 12, padding: 16, marginBottom: 15 }}>
         <Text style={{ color: "#6b7280", fontSize: 14, lineHeight: 20 }}>
           실제 서비스에서는 마이데이터 연동으로 자동 조회됩니다.{"\n"}
-          데모 페르소나 중 하나를 선택해 체험해 보세요.
+          데모 페르소나 중 하나를 선택해 체험해 보세요
         </Text>
       </View>
 

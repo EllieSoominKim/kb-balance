@@ -32,49 +32,62 @@ export default function TimelineScreen() {
     <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
       <Header />
 
-      <Pressable onPress={() => router.back()} style={{ marginBottom: 16 }}>
-        <Text style={{ color: "#6b7280" }}>← 뒤로</Text>
+      <Pressable
+        onPress={() => router.push({ pathname: "/onboarding/goal", params: { personaId, risk } })}
+        style={{
+          backgroundColor: "#fef3c7",
+          borderRadius: 999,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          alignSelf: "flex-start",
+          marginBottom: 16,
+        }}
+      >
+        <Text style={{ fontWeight: "bold", fontSize: 15 }}>뒤로</Text>
       </Pressable>
 
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
         <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#fbbf24", alignItems: "center", justifyContent: "center", marginRight: 8 }}>
           <Text style={{ fontWeight: "bold", fontSize: 12 }}>3</Text>
         </View>
-        <Text style={{ color: "#9ca3af" }}>{isOptimizeGoal ? "재조정 주기" : "목표 기한"}</Text>
+        <Text style={{ color: "#000000" }}>{isOptimizeGoal ? "재조정 주기" : "목표 기한"}</Text>
       </View>
 
       {isOptimizeGoal ? (
         <>
-          <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 24 }}>
+          <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 15 }}>
             이런 결정을 얼마나 자주{"\n"}하고 싶으신가요?
           </Text>
-          <View style={{ borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, marginBottom: 24 }}>
-            {FREQUENCIES.map((f, i) => (
-              <Pressable
-                key={f}
-                onPress={() => setFrequency(f)}
-                style={{
-                  padding: 16,
-                  borderBottomWidth: i < FREQUENCIES.length - 1 ? 1 : 0,
-                  borderBottomColor: "#f3f4f6",
-                  backgroundColor: frequency === f ? "#fffbeb" : "white",
-                }}
-              >
-                <Text style={{ fontWeight: frequency === f ? "bold" : "normal" }}>{f}</Text>
-              </Pressable>
-            ))}
-          </View>
-          <Text style={{ color: "#6b7280", fontSize: 13, lineHeight: 20 }}>
-            재조정 주기가 짧을수록 금리 변동에 더 민감하게 반응해 배분을 업데이트해요.
+
+          {FREQUENCIES.map((f) => (
+            <Pressable
+              key={f}
+              onPress={() => setFrequency(f)}
+              style={{
+                backgroundColor: "white",
+                borderWidth: 1.5,
+                borderColor: frequency === f ? "#fbbf24" : "#e5e7eb",
+                borderRadius: 12,
+                padding: 16,
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ fontWeight: frequency === f ? "bold" : "normal", fontSize: 15 }}>{f}</Text>
+            </Pressable>
+          ))}
+
+          <Text style={{ color: "#6b7280", fontSize: 14, lineHeight: 22, marginTop: 8 }}>
+            <Text style={{ color: "#6b7280" }}>* </Text>
+            재조정 주기가 짧을수록 금리 변동에 더 민감하게 반응해 배분을 업데이트해요
           </Text>
         </>
       ) : (
         <>
-          <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 24 }}>
+          <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 15 }}>
             목표를 언제까지{"\n"}달성하고 싶으신가요?
           </Text>
-          <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-            <Text style={{ textAlign: "center", fontSize: 24, fontWeight: "bold", marginBottom: 16, color: "#fbbf24" }}>
+          <View style={{ backgroundColor: "white", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 16, padding: 24, marginBottom: 24 }}>
+            <Text style={{ textAlign: "center", fontSize: 22, fontWeight: "bold", marginBottom: 16, color: "#fbbf24" }}>
               {yearsLabel}
             </Text>
             <Slider
@@ -92,16 +105,32 @@ export default function TimelineScreen() {
               <Text style={{ fontSize: 11, color: "#9ca3af" }}>30년+</Text>
             </View>
           </View>
-          <Text style={{ color: "#6b7280", fontSize: 13, lineHeight: 20 }}>
-            기한이 짧으면 안전한 저축 중심으로, 길면 복리 효과를 살린 투자 중심으로 배분해요.
+          <Text style={{ color: "#6b7280", fontSize: 14, lineHeight: 22 }}>
+            <Text style={{ color: "#6b7280" }}>*  </Text>
+            목표 기한이 짧을수록 유동성 높은 저축 중심으로, 길수록 복리 효과를 누리는 투자 비중을 늘려요
           </Text>
         </>
       )}
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 32, marginBottom: 40 }}>
+      <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 24, marginBottom: 24 }}>
+        {[0, 1, 2].map((i) => (
+          <View
+            key={i}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: i === 2 ? "#1f2937" : "#e5e7eb",
+              marginHorizontal: 4,
+            }}
+          />
+        ))}
+      </View>
+
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 40 }}>
         <Pressable
           style={{ backgroundColor: "#f3f4f6", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24 }}
-          onPress={() => router.back()}
+          onPress={() => router.push({ pathname: "/onboarding/goal", params: { personaId, risk } })}
         >
           <Text style={{ fontWeight: "bold" }}>이전</Text>
         </Pressable>

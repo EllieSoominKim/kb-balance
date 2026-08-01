@@ -24,18 +24,28 @@ export default function GoalScreen() {
     <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
       <Header />
 
-      <Pressable onPress={() => router.back()} style={{ marginBottom: 16 }}>
-        <Text style={{ color: "#6b7280" }}>← 뒤로</Text>
+      <Pressable
+        onPress={() => router.push({ pathname: "/onboarding/risk", params: { personaId } })}
+        style={{
+          backgroundColor: "#fef3c7",
+          borderRadius: 999,
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          alignSelf: "flex-start",
+          marginBottom: 16,
+        }}
+      >
+        <Text style={{ fontWeight: "bold", fontSize: 15 }}>뒤로</Text>
       </Pressable>
 
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
         <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: "#fbbf24", alignItems: "center", justifyContent: "center", marginRight: 8 }}>
           <Text style={{ fontWeight: "bold", fontSize: 12 }}>2</Text>
         </View>
-        <Text style={{ color: "#9ca3af" }}>목표</Text>
+        <Text style={{ color: "#000000" }}>목표</Text>
       </View>
 
-      <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 24 }}>
+      <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 15 }}>
         가장 중요한 재무 목표를{"\n"}골라주세요
       </Text>
 
@@ -44,9 +54,9 @@ export default function GoalScreen() {
           key={g.key}
           onPress={() => setSelected(g.key)}
           style={{
+            backgroundColor: "white",
             borderWidth: 1.5,
             borderColor: selected === g.key ? "#fbbf24" : "#e5e7eb",
-            backgroundColor: selected === g.key ? "#fffbeb" : "white",
             borderRadius: 12,
             padding: 14,
             marginBottom: 10,
@@ -57,10 +67,25 @@ export default function GoalScreen() {
         </Pressable>
       ))}
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 24, marginBottom: 40 }}>
+      <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 24, marginBottom: 24 }}>
+        {[0, 1, 2].map((i) => (
+          <View
+            key={i}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: i === 1 ? "#1f2937" : "#e5e7eb",
+              marginHorizontal: 4,
+            }}
+          />
+        ))}
+      </View>
+
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 40 }}>
         <Pressable
           style={{ backgroundColor: "#f3f4f6", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 24 }}
-          onPress={() => router.back()}
+          onPress={() => router.push({ pathname: "/onboarding/risk", params: { personaId } })}
         >
           <Text style={{ fontWeight: "bold" }}>이전</Text>
         </Pressable>
