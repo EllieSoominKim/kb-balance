@@ -46,6 +46,7 @@ function matchProduct(
   category: string,
   context: {
     loanType: string | null;
+    loanCategory: "주택담보" | "신용" | null;
     loanAmount: number;
     calibratedRisk: number;
     correlation: number | null;
@@ -54,34 +55,27 @@ function matchProduct(
     investment: number;
   }
 ): { name: string; reason: string; url: string } {
-  const { loanType, loanAmount, calibratedRisk, correlation, ageGroup, goal, investment } = context;
+  const { loanType, loanCategory, calibratedRisk, correlation, ageGroup, goal, investment } = context;
   const KB_HOME = "https://www.kbstar.com/";
 
   if (category === "대출상환") {
-    if (isLargeLoan(loanAmount)) {
+    if (loanCategory === "주택담보") {
       if (loanType === "변동") {
         return {
           name: "KB 주택담보대출 갈아타기",
-          reason: "규모가 큰 변동금리 대출이라, 혼합금리형으로 전환하면 상승기 부담을 줄일 수 있어요.",
-          url: "https://kbthink.com/loan-guide/transfer.html",
+          reason: "변동금리 주담대 이용 중이시네요. 금리 상승기엔 고정금리 조건으로 갈아타거나 조건을 재확인해 이자 부담을 낮춰보세요.",
+          url: "https://kbthink.com/loan-guide/fixed-vs-variable.html",
         };
       }
       return {
-        name: "KB 주택담보대출 조기상환",
-        reason: "규모가 큰 고정금리 대출이라, 여유자금으로 원금을 앞당겨 갚으면 총 이자비용을 줄일 수 있어요.",
-        url: KB_HOME,
-      };
-    }
-    if (loanType === "변동") {
-      return {
         name: "KB 대출금상환 서비스",
-        reason: "변동금리 대출이라 금리 상승기엔 중도상환으로 부담을 줄이는 게 유리해요.",
-        url: KB_HOME,
+        reason: "고정금리 주담대이므로, 여유 자금이 생겼을 때 중도상환수수료 여부를 확인하고 원금을 일부 갚아 총 이자를 줄여보세요.",
+        url: "https://kbthink.com/loan-guide/prepayment.html",
       };
     }
     return {
       name: "KB 대출 갈아타기(대환대출)",
-      reason: "고정금리라 상환 급박도는 낮지만, 더 낮은 금리 상품으로 갈아탈 수 있는지 비교해봐요.",
+      reason: "보유 중인 신용대출의 잔액과 금리를 점검하고, 신용도가 오른 만큼 더 낮은 금리 상품으로 갈아탈 수 있는지 비교해보세요.",
       url: "https://kbthink.com/loan-guide/transfer.html",
     };
   }
@@ -91,48 +85,48 @@ function matchProduct(
       return {
         name: "청년 주택드림 청약통장",
         reason: "만 19~34세 청년의 내집마련 목표에 맞춘 청약통장으로, 비과세 혜택도 받을 수 있어요.",
-        url: "https://kbthink.com/main/asset-management/wealth-manage-tip/season/dream-housing-subscription.html",
+        url: "https://obank.kbstar.com/quics?page=C016613&cc=b061496:b061645&%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%83%81%ED%92%88%EC%BD%94%EB%93%9C=DP01000935&QSL=F&prcode=DP01000935",
       };
     }
     if (isYouth(ageGroup)) {
       return {
         name: "KB내맘대로적금",
         reason: "청년층도 자유롭게 납입액을 조절하며 목돈을 모을 수 있는 DIY형 적금이에요.",
-        url: KB_HOME,
+        url: "https://obank.kbstar.com/quics?page=C016613&cc=b061496:b061645&prcode=DP01000821&%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%83%81%ED%92%88%EC%BD%94%EB%93%9C=DP01000821&QSL=F",
       };
     }
     if (goal.includes("목돈")) {
       return {
-        name: "KB내맘대로적금",
-        reason: "목돈 마련 목표에 맞춰 자유롭게 납입액을 조절할 수 있는 적금이에요.",
-        url: KB_HOME,
+        name: "KB상호부금(정액적립식)",
+        reason: "목돈 마련 목표에 맞춰 매달 정해진 금액을 꾸준히 적립하는 전통적인 부금 상품이에요.",
+        url: "https://obank.kbstar.com/quics?page=C016613&cc=b061496:b061645&%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%83%81%ED%92%88%EC%BD%94%EB%93%9C=DP01000038&QSL=F&prcode=DP01000038",
       };
     }
     if (investment >= 50_000_000 && calibratedRisk >= 3) {
       return {
-        name: "KB글로벌 외화투자통장",
+        name: "KB TWO테크 외화정기예금",
         reason: "이미 투자자산 규모가 있는 편이라, 외화 분산으로 환테크 기회도 함께 노려볼 수 있어요.",
-        url: KB_HOME,
+        url: "https://obank.kbstar.com/quics?page=C101501&cc=b102293:b103845&QSL&%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%83%81%ED%92%88%EC%BD%94%EB%93%9C=FD01000970&%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%83%81%ED%92%88%EB%AA%85=KB%20TWO%ED%85%8C%ED%81%AC%20%EC%99%B8%ED%99%94%EC%A0%95%EA%B8%B0%EC%98%88%EA%B8%88",
       };
     }
     if (calibratedRisk <= 2) {
       return {
         name: "KB Star 정기예금",
         reason: "안정추구형 성향에 맞는 KB 대표 정기예금 상품이에요.",
-        url: "https://kbthink.com/main/asset-management/wealth-manage-tip/kbthink-original/202503/term-deposit.html",
+        url: "https://obank.kbstar.com/quics?page=C016613&cc=b061496:b061645&%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%83%81%ED%92%88%EC%BD%94%EB%93%9C=DP01000938&QSL=F&prcode=DP01000938",
       };
     }
     if (calibratedRisk === 3) {
       return {
         name: "KB내맘대로적금",
         reason: "중립형 성향에 맞춰 자유롭게 납입하며 목돈을 모을 수 있어요.",
-        url: KB_HOME,
+        url: "https://obank.kbstar.com/quics?page=C016613&cc=b061496:b061645&%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%83%81%ED%92%88%EC%BD%94%EB%93%9C=DP01000821&QSL=F&prcode=DP01000821",
       };
     }
     return {
       name: "KB Star*t 통장",
       reason: "성장추구형 성향이라, 입출금이 자유로운 통장에 대기자금을 두고 투자 기회를 노려볼 수 있어요.",
-      url: KB_HOME,
+      url: "https://obank.kbstar.com/quics?page=C060866&cc=b030658:b029684&isNew=N&prcode=DP01000186",
     };
   }
 
@@ -141,27 +135,27 @@ function matchProduct(
       return {
         name: "KB 연금저축펀드",
         reason: "은퇴 준비 목표에 맞춰 세제혜택이 있는 장기 연금상품으로 투자해요.",
-        url: KB_HOME,
+        url: "https://kbthink.com/main/asset-management/wealth-manage-tip/kbthink-original/202406/irp.html",
       };
     }
     if (correlation !== null && correlation > 0.3) {
       return {
-        name: "KB 추천펀드(채권형)",
+        name: "KB 이달의 추천펀드(채권형)",
         reason: "기존 자산과 상관관계가 높아, 채권형 펀드로 분산해 리스크를 낮춰요. (이달의 추천펀드는 매월 갱신돼요)",
-        url: KB_HOME,
+        url: "https://www.kbam.co.kr/board/view/414?boardCode=03&contentType=0&topYn=N",
       };
     }
     if (calibratedRisk >= 4) {
       return {
         name: "KB증권 중개형ISA",
         reason: "성장추구형 성향이라, 세제혜택과 함께 다양한 상품을 한 계좌에서 운용할 수 있는 ISA가 잘 맞아요.",
-        url: KB_HOME,
+        url: "https://kbthink.com/isa-account.html",
       };
     }
     return {
-      name: "KB 추천펀드(글로벌 자산배분형)",
+      name: "KB 이달의 추천펀드(글로벌 자산배분형)",
       reason: "기존 자산과 상관관계가 낮아, 지역·자산군을 넓힌 자산배분형 펀드로 분산 효과를 극대화해요. (이달의 추천펀드는 매월 갱신돼요)",
-      url: KB_HOME,
+      url: "https://kbthink.com/main/asset-management/asset-management-expert-column/asset-management-column/asset-management-column-230709.html",
     };
   }
 
@@ -389,6 +383,7 @@ export default function AllocationScreen() {
       {chartData.map((d) => {
         const product = matchProduct(d.key, {
           loanType: persona.loanType,
+          loanCategory: persona.loanCategory,
           loanAmount: persona.loanAmount,
           calibratedRisk,
           correlation,
@@ -406,7 +401,13 @@ export default function AllocationScreen() {
             </View>
             <Text style={{ fontWeight: "bold", fontSize: 15, marginBottom: 4 }}>{product.name}</Text>
             <Text style={{ color: "#6b7280", fontSize: 13, marginBottom: 10 }}>{product.reason}</Text>
-            <Pressable onPress={() => Linking.openURL(product.url)}>
+            <Pressable
+              onPress={() => {
+                Linking.openURL(product.url).catch((err) => {
+                  console.warn("링크를 열지 못했어요:", err);
+                });
+              }}
+            >
               <Text style={{ color: "#b45309", fontSize: 13, fontWeight: "bold", textAlign: "right" }}>알아보기 ▶</Text>
             </Pressable>
           </View>

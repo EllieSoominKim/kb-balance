@@ -10,6 +10,7 @@ export type Persona = {
   loanAmount: number;
   loanRate: number | null;
   loanType: "고정" | "변동" | null;
+  loanCategory: "주택담보" | "신용" | null;
   selfReportedRisk: number;
   isMainDemo: boolean;
 };
@@ -19,14 +20,15 @@ export const personas: Persona[] = [
     id: "social-newbie",
     name: "사회초년생",
     ageGroup: "20대 후반",
-    summary: "예금 800만원 · 학자금 대출 보유",
+    summary: "예금 800만원 · 소액 신용대출 보유",
     monthlyIncome: 2_800_000,
     monthlyFixedExpense: 1_200_000,
     deposit: 8_000_000,
     investment: 3_000_000,
     loanAmount: 12_000_000,
-    loanRate: 0.039,
+    loanRate: 0.059,
     loanType: "고정",
+    loanCategory: "신용",
     selfReportedRisk: 3,
     isMainDemo: false,
   },
@@ -42,6 +44,7 @@ export const personas: Persona[] = [
     loanAmount: 0,
     loanRate: null,
     loanType: null,
+    loanCategory: null,
     selfReportedRisk: 3,
     isMainDemo: false,
   },
@@ -57,6 +60,7 @@ export const personas: Persona[] = [
     loanAmount: 240_000_000,
     loanRate: 0.042,
     loanType: "변동",
+    loanCategory: "주택담보",
     selfReportedRisk: 2,
     isMainDemo: true,
   },
@@ -72,6 +76,7 @@ export const personas: Persona[] = [
     loanAmount: 0,
     loanRate: null,
     loanType: null,
+    loanCategory: null,
     selfReportedRisk: 3,
     isMainDemo: false,
   },
