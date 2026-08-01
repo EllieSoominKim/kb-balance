@@ -1,6 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
+import { Header } from "../../components/Header";
 
 const GOALS = [
   { key: "home", label: "내집마련", desc: "주택 구입을 위한 자금을 모아요" },
@@ -21,6 +22,8 @@ export default function GoalScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <Pressable onPress={() => router.back()} style={{ marginBottom: 16 }}>
         <Text style={{ color: "#6b7280" }}>← 뒤로</Text>
       </Pressable>

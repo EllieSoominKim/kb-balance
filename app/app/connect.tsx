@@ -2,6 +2,7 @@ import { View, Text, Pressable, ScrollView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { personas } from "../data/personas";
+import { Header } from "../components/Header";
 
 const INSTITUTIONS = [
   { key: "bank", label: "은행", example: "KB국민은행 등" },
@@ -57,6 +58,8 @@ export default function ConnectScreen() {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <Pressable onPress={() => router.back()} style={{ marginBottom: 16 }}>
         <Text style={{ color: "#6b7280" }}>← 뒤로</Text>
       </Pressable>
@@ -92,6 +95,8 @@ export default function ConnectScreen() {
           </Pressable>
         ))}
       </View>
+
+      <Text style={{ color: "#9ca3af", fontSize: 13, marginBottom: 20 }}>+ 개별 금융회사 직접 선택</Text>
 
       <View style={{ borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, marginBottom: 24 }}>
         <Pressable

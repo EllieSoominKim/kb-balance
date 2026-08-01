@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { personas } from "../data/personas";
 import { simulateStress, StressTestResponse } from "../lib/api";
 import { LineChart } from "../components/LineChart";
+import { Header } from "../components/Header";
 
 export default function SimulationScreen() {
   const { personaId, goal } = useLocalSearchParams<{ personaId: string; goal?: string }>();
@@ -64,6 +65,8 @@ export default function SimulationScreen() {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 4 }}>금리 스트레스 테스트</Text>
       <Text style={{ color: "#6b7280", marginBottom: 24 }}>
         기준금리가 상승할 경우 부담 변화를 확인해 보세요.

@@ -2,13 +2,14 @@ import { View, Text, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Slider from "@react-native-community/slider";
 import { useState } from "react";
+import { Header } from "../../components/Header";
 
 const FREQUENCIES = ["여유자금 생길 때마다", "매달", "분기마다"];
 
 export default function TimelineScreen() {
   const { personaId, risk, goal } = useLocalSearchParams<{ personaId: string; risk: string; goal: string }>();
   const router = useRouter();
-  const isOptimizeGoal = goal === "optimize";
+  const isOptimizeGoal = goal === "여유자금 상환·투자 최적화";
 
   const [years, setYears] = useState(10);
   const [frequency, setFrequency] = useState(FREQUENCIES[0]);
@@ -29,6 +30,8 @@ export default function TimelineScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <Pressable onPress={() => router.back()} style={{ marginBottom: 16 }}>
         <Text style={{ color: "#6b7280" }}>← 뒤로</Text>
       </Pressable>

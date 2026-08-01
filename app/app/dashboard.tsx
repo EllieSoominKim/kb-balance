@@ -2,6 +2,7 @@ import { View, Text, ScrollView, ActivityIndicator, Pressable } from "react-nati
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { LineChart } from "../components/LineChart";
+import { Header } from "../components/Header";
 import {
   personas,
   dummyRateHistory,
@@ -56,7 +57,6 @@ export default function DashboardScreen() {
 
     async function loadData() {
       try {
-        // 실제 ECOS·뉴스 데이터 우선 시도, 실패하면 더미로 폴백
         let rates = dummyRateHistory;
         let sentiment = dummyNewsSentiment;
         let volume = dummyNewsVolume;
@@ -141,6 +141,8 @@ export default function DashboardScreen() {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <Text style={{ color: "#6b7280", marginBottom: 4 }}>{persona.name}님, 오늘의 자산 현황이에요</Text>
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>자산 대시보드</Text>
 
@@ -209,7 +211,7 @@ export default function DashboardScreen() {
         )}
       </View>
 
-      {/* 뉴스 감성 요약 카드 — 실제 네이버뉴스 데이터를 집계 */}
+      {/* 뉴스 감성 요약 카드 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
         <Text style={{ color: "#6b7280", marginBottom: 8 }}>뉴스 감성 요약 (최근 7일)</Text>
         <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 12 }}>

@@ -2,6 +2,7 @@ export type Persona = {
   id: string;
   name: string;
   ageGroup: string;
+  summary: string;
   monthlyIncome: number;
   monthlyFixedExpense: number;
   deposit: number;
@@ -18,6 +19,7 @@ export const personas: Persona[] = [
     id: "social-newbie",
     name: "사회초년생",
     ageGroup: "20대 후반",
+    summary: "예금 800만원 · 학자금 대출 보유",
     monthlyIncome: 2_800_000,
     monthlyFixedExpense: 1_200_000,
     deposit: 8_000_000,
@@ -32,6 +34,7 @@ export const personas: Persona[] = [
     id: "newlywed",
     name: "신혼부부",
     ageGroup: "30대 초반",
+    summary: "맞벌이 · 대출 없음 · 내 집 마련 준비",
     monthlyIncome: 5_500_000,
     monthlyFixedExpense: 2_200_000,
     deposit: 30_000_000,
@@ -46,6 +49,7 @@ export const personas: Persona[] = [
     id: "loan-holder",
     name: "대출보유 직장인",
     ageGroup: "30대 후반",
+    summary: "변동 금리 주담대 2억 4000만원 · 상환 vs 투자 결정",
     monthlyIncome: 4_800_000,
     monthlyFixedExpense: 2_500_000,
     deposit: 15_000_000,
@@ -60,6 +64,7 @@ export const personas: Persona[] = [
     id: "pre-retirement",
     name: "은퇴준비 중년",
     ageGroup: "50대 초반",
+    summary: "대출 없음 · 자산 2억원 이상 · 은퇴 10년 준비",
     monthlyIncome: 6_000_000,
     monthlyFixedExpense: 2_800_000,
     deposit: 80_000_000,

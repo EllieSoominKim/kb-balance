@@ -1,6 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { personas } from "../data/personas";
+import { Header } from "../components/Header";
 
 export default function SummaryScreen() {
   const { personaId } = useLocalSearchParams<{ personaId: string }>();
@@ -11,6 +12,8 @@ export default function SummaryScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <View style={{ borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
         <Text style={{ fontWeight: "bold", fontSize: 16, marginBottom: 16 }}>
           ✓ {persona.name}님 계좌 연결 완료

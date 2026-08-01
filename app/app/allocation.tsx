@@ -2,6 +2,7 @@ import { View, Text, ScrollView, ActivityIndicator, Pressable } from "react-nati
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { PieChart } from "../components/PieChart";
+import { Header } from "../components/Header";
 import {
   personas,
   dummyRateHistory,
@@ -187,7 +188,6 @@ export default function AllocationScreen() {
         });
         setCalibratedRisk(profileResult.calibrated_risk);
 
-        // 실제 ECOS·뉴스 데이터 우선 시도, 실패하면 더미로 폴백
         let rates = dummyRateHistory;
         let sentiment = dummyNewsSentiment;
         let volume = dummyNewsVolume;
@@ -220,7 +220,6 @@ export default function AllocationScreen() {
         setAllocation(hrpResult.allocation);
         setCorrelation(hrpResult.loan_investment_correlation);
 
-        // 이번 계산 결과를 실제로 저장 (다음 방문부터 진짜 이력이 쌓임)
         const repaymentPct = Math.round((hrpResult.allocation["대출상환"] ?? 0) * 100);
         const savingsPct = Math.round((hrpResult.allocation["예금"] ?? 0) * 100);
         const investmentPct = Math.round((hrpResult.allocation["투자자산"] ?? 0) * 100);
@@ -281,6 +280,8 @@ export default function AllocationScreen() {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 4 }}>추천 자산 배분</Text>
       <Text style={{ color: "#6b7280", marginBottom: 24 }}>
         {persona.name}님께 맞춘 상환·저축·투자 비율이에요
@@ -305,7 +306,6 @@ export default function AllocationScreen() {
         </View>
       ))}
 
-      {/* ① 왜 이렇게 배분했나요 */}
       <Text style={{ fontWeight: "bold", fontSize: 16, marginTop: 24, marginBottom: 12 }}>
         ① 왜 이렇게 배분했나요
       </Text>
@@ -346,7 +346,6 @@ export default function AllocationScreen() {
         </Text>
       </View>
 
-      {/* ② KB 상품 연계 — 실제 계산된 리스크·상관계수·대출유형·나이·목표·투자규모 기반 매칭 */}
       <Text style={{ fontWeight: "bold", fontSize: 16, marginBottom: 12 }}>
         ② 이 배분, KB 상품으로 실행하면
       </Text>
@@ -373,7 +372,6 @@ export default function AllocationScreen() {
         );
       })}
 
-      {/* 최근 배분 변화 이력 — 실제 DB에 저장된 값 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 18, marginTop: 12, marginBottom: 20 }}>
         <Text style={{ fontWeight: "bold", marginBottom: 10 }}>최근 배분 변화 이력</Text>
         {history.length <= 1 ? (

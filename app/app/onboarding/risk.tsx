@@ -2,6 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Slider from "@react-native-community/slider";
 import { useState } from "react";
+import { Header } from "../../components/Header";
 
 const LABELS = ["안전형", "안정추구형", "중립형", "성장추구형", "공격형"];
 
@@ -12,6 +13,8 @@ export default function RiskScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
+      <Header />
+
       <Pressable onPress={() => router.back()} style={{ marginBottom: 16 }}>
         <Text style={{ color: "#6b7280" }}>← 뒤로</Text>
       </Pressable>
