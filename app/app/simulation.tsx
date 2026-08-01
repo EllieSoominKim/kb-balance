@@ -7,17 +7,18 @@ import { simulateStress, StressTestResponse } from "../lib/api";
 import { LineChart } from "../components/LineChart";
 
 export default function SimulationScreen() {
-  const { personaId } = useLocalSearchParams<{ personaId: string }>();
+  const { personaId, goal } = useLocalSearchParams<{ personaId: string; goal?: string }>();
   const router = useRouter();
   const persona = personas.find((p) => p.id === personaId);
 
   const [rateShock, setRateShock] = useState(1.0);
-  const currentNetAsset = persona
-    ? persona.deposit + persona.investment - persona.loanAmount
-    : 0;
   const [result, setResult] = useState<StressTestResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const currentNetAsset = persona
+    ? persona.deposit + persona.investment - persona.loanAmount
+    : 0;
 
   useEffect(() => {
     if (!persona) return;
@@ -134,7 +135,7 @@ export default function SimulationScreen() {
             </View>
             <View style={{ flexDirection: "row", marginTop: 12, gap: 16 }}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <View style={{ width: 16, height: 2, backgroundColor: "#9ca3af", marginRight: 6 }} />
+                <View style={{ width: 16, height: 2, backgroundColor: "#1f2937", marginRight: 6 }} />
                 <Text style={{ fontSize: 12, color: "#6b7280" }}>기본 전망</Text>
               </View>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -146,7 +147,7 @@ export default function SimulationScreen() {
 
           <Pressable
             style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 16, alignItems: "center", marginBottom: 40 }}
-            onPress={() => router.push({ pathname: "/allocation", params: { personaId } })}
+            onPress={() => router.push({ pathname: "/allocation", params: { personaId, goal } })}
           >
             <Text style={{ fontWeight: "bold", color: "#1f2937" }}>추천 배분 보기</Text>
           </Pressable>

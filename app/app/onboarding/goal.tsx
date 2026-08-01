@@ -63,9 +63,13 @@ export default function GoalScreen() {
         </Pressable>
         <Pressable
           style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 14, paddingHorizontal: 32 }}
-          onPress={() =>
-            router.push({ pathname: "/onboarding/timeline", params: { personaId, risk, goal: selected } })
-          }
+          onPress={() => {
+            const selectedLabel = GOALS.find((g) => g.key === selected)?.label ?? selected;
+            router.push({
+              pathname: "/onboarding/timeline",
+              params: { personaId, risk, goal: selectedLabel },
+            });
+          }}
         >
           <Text style={{ fontWeight: "bold", color: "#1f2937" }}>다음</Text>
         </Pressable>

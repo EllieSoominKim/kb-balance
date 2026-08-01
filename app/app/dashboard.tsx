@@ -8,14 +8,21 @@ import {
   dummyNewsSentiment,
   dummyNewsVolume,
 } from "../data/personas";
-import { submitProfile, predictGarch, ProfileResponse, GarchResponse } from "../lib/api";
+import {
+  fetchRateHistory,
+  fetchNewsSentiment,
+  submitProfile,
+  predictGarch,
+  ProfileResponse,
+  GarchResponse,
+} from "../lib/api";
 import { RiskGauge } from "../components/RiskGauge";
 
 function summarizeSentiment(scores: number[]) {
   const positive = scores.filter((s) => s > 0.15).length;
   const negative = scores.filter((s) => s < -0.15).length;
   const neutral = scores.length - positive - negative;
-  const total = scores.length;
+  const total = scores.length || 1;
   const mean = scores.reduce((a, b) => a + b, 0) / total;
   const variance = scores.reduce((a, b) => a + (b - mean) ** 2, 0) / total;
   const std = Math.sqrt(variance);
@@ -29,7 +36,11 @@ function summarizeSentiment(scores: number[]) {
 }
 
 export default function DashboardScreen() {
-  const { personaId, risk } = useLocalSearchParams<{ personaId: string; risk?: string }>();
+  const { personaId, risk, goal } = useLocalSearchParams<{
+    personaId: string;
+    risk?: string;
+    goal?: string;
+  }>();
   const router = useRouter();
   const persona = personas.find((p) => p.id === personaId);
 
@@ -37,12 +48,30 @@ export default function DashboardScreen() {
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
   const [garch, setGarch] = useState<GarchResponse | null>(null);
+  const [rateHistory, setRateHistory] = useState<number[]>(dummyRateHistory);
+  const [newsSentimentReal, setNewsSentimentReal] = useState<number[]>(dummyNewsSentiment);
 
   useEffect(() => {
     if (!persona) return;
 
     async function loadData() {
       try {
+        // 실제 ECOS·뉴스 데이터 우선 시도, 실패하면 더미로 폴백
+        let rates = dummyRateHistory;
+        let sentiment = dummyNewsSentiment;
+        let volume = dummyNewsVolume;
+        try {
+          const ratesResult = await fetchRateHistory(24);
+          rates = ratesResult.rate_history;
+          const newsResult = await fetchNewsSentiment(24);
+          sentiment = newsResult.news_sentiment;
+          volume = newsResult.news_volume;
+        } catch (e) {
+          console.warn("실시간 시장 데이터 조회 실패, 더미로 대체:", e);
+        }
+        setRateHistory(rates);
+        setNewsSentimentReal(sentiment);
+
         const [profileResult, garchResult] = await Promise.all([
           submitProfile({
             persona_id: persona.id,
@@ -54,13 +83,13 @@ export default function DashboardScreen() {
             loan_rate: persona.loanRate,
             loan_type: persona.loanType,
             self_reported_risk: risk ? Number(risk) : persona.selfReportedRisk,
-            goal: "여유자금 상환·투자 최적화",
+            goal: goal ?? "여유자금 상환·투자 최적화",
             rebalance_frequency: "여유자금 생길 때마다",
           }),
           predictGarch({
-            rate_history: dummyRateHistory,
-            news_sentiment: dummyNewsSentiment,
-            news_volume: dummyNewsVolume,
+            rate_history: rates,
+            news_sentiment: sentiment,
+            news_volume: volume,
             horizon: 3,
             threshold_bp: 25,
           }),
@@ -108,7 +137,7 @@ export default function DashboardScreen() {
   const totalForBar = totalAsset + persona.loanAmount || 1;
   const assetBarPct = (totalAsset / totalForBar) * 100;
   const loanBarPct = (persona.loanAmount / totalForBar) * 100;
-  const sentiment = summarizeSentiment(dummyNewsSentiment);
+  const sentiment = summarizeSentiment(newsSentimentReal);
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20, paddingTop: 64 }}>
@@ -161,7 +190,7 @@ export default function DashboardScreen() {
         </Text>
 
         <View style={{ alignItems: "center", marginVertical: 12 }}>
-          <LineChart basePath={dummyRateHistory} stressedPath={dummyRateHistory} width={280} height={100} />
+          <LineChart basePath={rateHistory} stressedPath={rateHistory} width={280} height={100} />
         </View>
 
         <View style={{ backgroundColor: "#fef3c7", borderRadius: 8, padding: 12 }}>
@@ -180,7 +209,7 @@ export default function DashboardScreen() {
         )}
       </View>
 
-      {/* 뉴스 감성 요약 카드 — dummyNewsSentiment 배열을 실제로 집계 */}
+      {/* 뉴스 감성 요약 카드 — 실제 네이버뉴스 데이터를 집계 */}
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 20, marginBottom: 24 }}>
         <Text style={{ color: "#6b7280", marginBottom: 8 }}>뉴스 감성 요약 (최근 7일)</Text>
         <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 12 }}>
@@ -201,7 +230,7 @@ export default function DashboardScreen() {
       {/* 시뮬레이션 보기 버튼 */}
       <Pressable
         style={{ backgroundColor: "#fbbf24", borderRadius: 12, paddingVertical: 16, alignItems: "center", marginBottom: 40 }}
-        onPress={() => router.push({ pathname: "/simulation", params: { personaId } })}
+        onPress={() => router.push({ pathname: "/simulation", params: { personaId, goal } })}
       >
         <Text style={{ fontWeight: "bold", color: "#1f2937" }}>시뮬레이션 보기</Text>
       </Pressable>

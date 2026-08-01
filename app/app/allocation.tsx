@@ -11,6 +11,8 @@ import {
   dummyInvestmentReturns,
 } from "../data/personas";
 import {
+  fetchRateHistory,
+  fetchNewsSentiment,
   predictGarch,
   optimizeHrp,
   saveAllocationSnapshot,
@@ -149,7 +151,7 @@ function matchProduct(
 }
 
 export default function AllocationScreen() {
-  const { personaId } = useLocalSearchParams<{ personaId: string }>();
+  const { personaId, goal } = useLocalSearchParams<{ personaId: string; goal?: string }>();
   const router = useRouter();
   const persona = personas.find((p) => p.id === personaId);
 
@@ -180,15 +182,29 @@ export default function AllocationScreen() {
           loan_rate: persona!.loanRate,
           loan_type: persona!.loanType,
           self_reported_risk: persona!.selfReportedRisk,
-          goal: "여유자금 상환·투자 최적화",
+          goal: goal ?? "여유자금 상환·투자 최적화",
           rebalance_frequency: "여유자금 생길 때마다",
         });
         setCalibratedRisk(profileResult.calibrated_risk);
 
+        // 실제 ECOS·뉴스 데이터 우선 시도, 실패하면 더미로 폴백
+        let rates = dummyRateHistory;
+        let sentiment = dummyNewsSentiment;
+        let volume = dummyNewsVolume;
+        try {
+          const ratesResult = await fetchRateHistory(24);
+          rates = ratesResult.rate_history;
+          const newsResult = await fetchNewsSentiment(24);
+          sentiment = newsResult.news_sentiment;
+          volume = newsResult.news_volume;
+        } catch (e) {
+          console.warn("실시간 시장 데이터 조회 실패, 더미로 대체:", e);
+        }
+
         const garchResult = await predictGarch({
-          rate_history: dummyRateHistory,
-          news_sentiment: dummyNewsSentiment,
-          news_volume: dummyNewsVolume,
+          rate_history: rates,
+          news_sentiment: sentiment,
+          news_volume: volume,
           horizon: 3,
           threshold_bp: 25,
         });
@@ -342,7 +358,7 @@ export default function AllocationScreen() {
           calibratedRisk,
           correlation,
           ageGroup: persona.ageGroup,
-          goal: "여유자금 상환·투자 최적화",
+          goal: goal ?? "여유자금 상환·투자 최적화",
           investment: persona.investment,
         });
         return (

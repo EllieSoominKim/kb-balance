@@ -66,6 +66,7 @@ export type HrpRequest = {
 
 export type HrpResponse = {
   allocation: Record<string, number>;
+  loan_investment_correlation: number | null;
 };
 
 export async function optimizeHrp(payload: HrpRequest): Promise<HrpResponse> {
@@ -106,5 +107,53 @@ export async function simulateStress(payload: StressTestRequest): Promise<Stress
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`스트레스 테스트 실패: ${res.status}`);
+  return res.json();
+}
+
+export async function saveAllocationSnapshot(payload: {
+  persona_id: string;
+  repayment_pct: number;
+  savings_pct: number;
+  investment_pct: number;
+}): Promise<void> {
+  await fetch(`${API_BASE}/api/history/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+export type HistoryItem = {
+  date: string;
+  repayment_pct: number;
+  savings_pct: number;
+  investment_pct: number;
+};
+
+export async function fetchAllocationHistory(personaId: string): Promise<HistoryItem[]> {
+  const res = await fetch(`${API_BASE}/api/history/${personaId}`);
+  if (!res.ok) throw new Error("이력 조회 실패");
+  return res.json();
+}
+
+export type RatesResponse = {
+  rate_history: number[];
+};
+
+export async function fetchRateHistory(months: number = 24): Promise<RatesResponse> {
+  const res = await fetch(`${API_BASE}/api/market/rates?months=${months}`);
+  if (!res.ok) throw new Error(`금리 데이터 조회 실패: ${res.status}`);
+  return res.json();
+}
+
+export type NewsResponse = {
+  news_sentiment: number[];
+  news_volume: number[];
+  headlines_sample: string[];
+};
+
+export async function fetchNewsSentiment(months: number = 24, query: string = "기준금리"): Promise<NewsResponse> {
+  const res = await fetch(`${API_BASE}/api/market/news?months=${months}&query=${encodeURIComponent(query)}`);
+  if (!res.ok) throw new Error(`뉴스 데이터 조회 실패: ${res.status}`);
   return res.json();
 }
