@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, ActivityIndicator, Pressable } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, Pressable, Image, Linking } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { NavBar } from "../components/NavBar";
@@ -53,8 +53,9 @@ function matchProduct(
     goal: string;
     investment: number;
   }
-): { name: string; reason: string } {
+): { name: string; reason: string; url: string } {
   const { loanType, loanAmount, calibratedRisk, correlation, ageGroup, goal, investment } = context;
+  const KB_HOME = "https://www.kbstar.com/";
 
   if (category === "대출상환") {
     if (isLargeLoan(loanAmount)) {
@@ -62,22 +63,26 @@ function matchProduct(
         return {
           name: "KB 주택담보대출 갈아타기",
           reason: "규모가 큰 변동금리 대출이라, 혼합금리형으로 전환하면 상승기 부담을 줄일 수 있어요.",
+          url: "https://kbthink.com/loan-guide/transfer.html",
         };
       }
       return {
         name: "KB 주택담보대출 조기상환",
         reason: "규모가 큰 고정금리 대출이라, 여유자금으로 원금을 앞당겨 갚으면 총 이자비용을 줄일 수 있어요.",
+        url: KB_HOME,
       };
     }
     if (loanType === "변동") {
       return {
         name: "KB 대출금상환 서비스",
         reason: "변동금리 대출이라 금리 상승기엔 중도상환으로 부담을 줄이는 게 유리해요.",
+        url: KB_HOME,
       };
     }
     return {
       name: "KB 대출 갈아타기(대환대출)",
       reason: "고정금리라 상환 급박도는 낮지만, 더 낮은 금리 상품으로 갈아탈 수 있는지 비교해봐요.",
+      url: "https://kbthink.com/loan-guide/transfer.html",
     };
   }
 
@@ -86,41 +91,48 @@ function matchProduct(
       return {
         name: "청년 주택드림 청약통장",
         reason: "만 19~34세 청년의 내집마련 목표에 맞춘 청약통장으로, 비과세 혜택도 받을 수 있어요.",
+        url: "https://kbthink.com/main/asset-management/wealth-manage-tip/season/dream-housing-subscription.html",
       };
     }
     if (isYouth(ageGroup)) {
       return {
-        name: "KB청년미래적금",
-        reason: "만 19~34세 청년 대상 정책형 적금으로, 정부기여금과 이자소득세 비과세 혜택이 있어요.",
+        name: "KB내맘대로적금",
+        reason: "청년층도 자유롭게 납입액을 조절하며 목돈을 모을 수 있는 DIY형 적금이에요.",
+        url: KB_HOME,
       };
     }
     if (goal.includes("목돈")) {
       return {
         name: "KB내맘대로적금",
         reason: "목돈 마련 목표에 맞춰 자유롭게 납입액을 조절할 수 있는 적금이에요.",
+        url: KB_HOME,
       };
     }
     if (investment >= 50_000_000 && calibratedRisk >= 3) {
       return {
         name: "KB글로벌 외화투자통장",
         reason: "이미 투자자산 규모가 있는 편이라, 외화 분산으로 환테크 기회도 함께 노려볼 수 있어요.",
+        url: KB_HOME,
       };
     }
     if (calibratedRisk <= 2) {
       return {
         name: "KB Star 정기예금",
         reason: "안정추구형 성향에 맞는 KB 대표 정기예금 상품이에요.",
+        url: "https://kbthink.com/main/asset-management/wealth-manage-tip/kbthink-original/202503/term-deposit.html",
       };
     }
     if (calibratedRisk === 3) {
       return {
         name: "KB내맘대로적금",
         reason: "중립형 성향에 맞춰 자유롭게 납입하며 목돈을 모을 수 있어요.",
+        url: KB_HOME,
       };
     }
     return {
-      name: "KB WELCOME통장",
+      name: "KB Star*t 통장",
       reason: "성장추구형 성향이라, 입출금이 자유로운 통장에 대기자금을 두고 투자 기회를 노려볼 수 있어요.",
+      url: KB_HOME,
     };
   }
 
@@ -129,27 +141,31 @@ function matchProduct(
       return {
         name: "KB 연금저축펀드",
         reason: "은퇴 준비 목표에 맞춰 세제혜택이 있는 장기 연금상품으로 투자해요.",
+        url: KB_HOME,
       };
     }
     if (correlation !== null && correlation > 0.3) {
       return {
         name: "KB 추천펀드(채권형)",
         reason: "기존 자산과 상관관계가 높아, 채권형 펀드로 분산해 리스크를 낮춰요. (이달의 추천펀드는 매월 갱신돼요)",
+        url: KB_HOME,
       };
     }
     if (calibratedRisk >= 4) {
       return {
-        name: "KB ISA(투자중개형)",
+        name: "KB증권 중개형ISA",
         reason: "성장추구형 성향이라, 세제혜택과 함께 다양한 상품을 한 계좌에서 운용할 수 있는 ISA가 잘 맞아요.",
+        url: KB_HOME,
       };
     }
     return {
       name: "KB 추천펀드(글로벌 자산배분형)",
       reason: "기존 자산과 상관관계가 낮아, 지역·자산군을 넓힌 자산배분형 펀드로 분산 효과를 극대화해요. (이달의 추천펀드는 매월 갱신돼요)",
+      url: KB_HOME,
     };
   }
 
-  return { name: "KB 상품 상담", reason: "맞춤 상품을 안내받아보세요." };
+  return { name: "KB 상품 상담", reason: "맞춤 상품을 안내받아보세요.", url: KB_HOME };
 }
 
 export default function AllocationScreen() {
@@ -234,7 +250,7 @@ export default function AllocationScreen() {
         setHistory(historyResult);
       } catch (e) {
         console.error(e);
-        setError("배분 계산에 실패했어요. 서버 연결을 확인해주세요.");
+        setError("배분 계산에 실패했어요. 서버 연결을 확인해주세요");
       } finally {
         setLoading(false);
       }
@@ -246,7 +262,7 @@ export default function AllocationScreen() {
   if (!persona) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>페르소나를 찾을 수 없어요.</Text>
+        <Text>페르소나를 찾을 수 없어요</Text>
       </View>
     );
   }
@@ -314,37 +330,55 @@ export default function AllocationScreen() {
 
       {hasLoan && (
         <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 18, marginBottom: 12 }}>
-          <Text style={{ fontWeight: "bold", marginBottom: 8 }}>🔗 상관관계 분석</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+            <Image source={require("../assets/correlation.png")} style={{ width: 20, height: 20, marginRight: 8 }} resizeMode="contain" />
+            <Text style={{ fontWeight: "bold" }}>상관관계 분석</Text>
+          </View>
           <Text style={{ color: "#374151", lineHeight: 20 }}>
             보유하신 대출({(persona.loanRate! * 100).toFixed(1)}%, {persona.loanType})과 투자자산은{" "}
             {correlation !== null && correlation > 0.3
               ? "금리 상승기에 함께 나빠지는 경향이 있어요"
               : "상관관계가 낮아 분산 효과가 있는 편이에요"}
             {correlation !== null ? ` (상관계수 ${correlation})` : ""}
-            {"\n"}→{" "}
-            {correlation !== null && correlation > 0.3
-              ? "같은 위험 그룹으로 묶여 분산 효과가 낮다고 판단"
-              : "서로 다른 위험 그룹으로 분리되어 분산 효과가 있다고 판단"}
+            {"\n\n"}
+            →{" "}
+            <Text style={{ fontWeight: "bold" }}>
+              {correlation !== null && correlation > 0.3
+                ? "같은 위험 그룹으로 묶여 분산 효과가 낮다고 판단"
+                : "서로 다른 위험 그룹으로 분리되어 분산 효과가 있다고 판단"}
+            </Text>
           </Text>
         </View>
       )}
 
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 18, marginBottom: 12 }}>
-        <Text style={{ fontWeight: "bold", marginBottom: 8 }}>📊 금리신호 반영</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+          <Image source={require("../assets/interest-rate.png")} style={{ width: 20, height: 20, marginRight: 8 }} resizeMode="contain" />
+          <Text style={{ fontWeight: "bold" }}>금리신호 반영</Text>
+        </View>
         <Text style={{ color: "#374151", lineHeight: 20 }}>
-          GARCH-X 모델이 3개월 내 추가 금리 인상 가능성을 {(hikeProb * 100).toFixed(0)}%로 예측했어요.{"\n"}
-          {hasLoan
-            ? "→ 변동금리 대출의 상환 부담이 커질 가능성이 높아, 상환 비중을 상향했어요."
-            : "→ 예·적금·채권형 상품의 기대수익이 높아질 가능성을 반영했어요."}
+          GARCH-X 모델이 3개월 내 추가 금리 인상 가능성을 {(hikeProb * 100).toFixed(0)}%로 예측했어요
+          {"\n\n"}
+          →{" "}
+          <Text style={{ fontWeight: "bold" }}>
+            {hasLoan
+              ? "변동금리 대출의 상환 부담이 커질 가능성이 높아, 상환 비중을 상향했어요"
+              : "예·적금·채권형 상품의 기대수익이 높아질 가능성을 반영했어요"}
+          </Text>
         </Text>
       </View>
 
       <View style={{ backgroundColor: "#f9fafb", borderRadius: 16, padding: 18, marginBottom: 24 }}>
-        <Text style={{ fontWeight: "bold", marginBottom: 8 }}>⚖️ 최종 판단</Text>
-        <Text style={{ color: "#374151", lineHeight: 20 }}>
-          {hasLoan
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+          <Image source={require("../assets/final.png")} style={{ width: 20, height: 20, marginRight: 8 }} resizeMode="contain" />
+          <Text style={{ fontWeight: "bold" }}>최종 판단</Text>
+        </View>
+        <Text style={{ color: "#374151", lineHeight: 20, fontWeight: "bold" }}>
+          {hasLoan && correlation !== null && correlation > 0.3
             ? "대출과 상관관계 높은 자산에 투자를 늘리는 대신, 금리 리스크를 먼저 줄이는 쪽이 기대손실 대비 안전해요."
-            : "보유 중인 대출이 없어, 리스크 성향에 맞춘 저축·투자 중심으로 배분했어요."}
+            : hasLoan
+            ? "대출과 투자자산의 상관관계는 낮아 분산 효과가 있지만, 금리 상승 신호를 고려해 상환 비중을 우선했어요"
+            : "보유 중인 대출이 없어, 리스크 성향에 맞춘 저축·투자 중심으로 배분했어요"}
         </Text>
       </View>
 
@@ -364,12 +398,17 @@ export default function AllocationScreen() {
         });
         return (
           <View key={d.key} style={{ backgroundColor: "#fffbeb", borderRadius: 16, padding: 18, marginBottom: 12 }}>
-            <Text style={{ color: "#92400e", fontWeight: "bold", marginBottom: 4 }}>
-              ● {d.x} · {Math.round((monthlySpare * d.y) / 100 / 10000)}만원
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
+              <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: d.color, marginRight: 6 }} />
+              <Text style={{ color: d.color, fontWeight: "bold" }}>
+                {d.x} · {Math.round((monthlySpare * d.y) / 100 / 10000)}만원
+              </Text>
+            </View>
             <Text style={{ fontWeight: "bold", fontSize: 15, marginBottom: 4 }}>{product.name}</Text>
             <Text style={{ color: "#6b7280", fontSize: 13, marginBottom: 10 }}>{product.reason}</Text>
-            <Text style={{ color: "#b45309", fontSize: 13, fontWeight: "bold", textAlign: "right" }}>알아보기 →</Text>
+            <Pressable onPress={() => Linking.openURL(product.url)}>
+              <Text style={{ color: "#b45309", fontSize: 13, fontWeight: "bold", textAlign: "right" }}>알아보기 ▶</Text>
+            </Pressable>
           </View>
         );
       })}
@@ -378,7 +417,7 @@ export default function AllocationScreen() {
         <Text style={{ fontWeight: "bold", marginBottom: 10 }}>최근 배분 변화 이력</Text>
         {history.length <= 1 ? (
           <Text style={{ color: "#9ca3af", fontSize: 13 }}>
-            아직 이력이 충분하지 않아요. 계산할 때마다 자동으로 기록되니, 다시 방문하면 변화 추이를 볼 수 있어요.
+            아직 이력이 충분하지 않아요. 계산할 때마다 자동으로 기록되니, 다시 방문하면 변화 추이를 볼 수 있어요
           </Text>
         ) : (
           history.map((h, i) => (
