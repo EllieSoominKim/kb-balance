@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   return (
     <main className="min-h-screen bg-gray-50 px-10 py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-bold">KB 국민은행 | 리스크 관제 대시보드</h1>
+        <h1 className="text-xl font-bold">KB 밸런스 | 리스크 관제 대시보드</h1>
         <button className="text-sm text-gray-500 border rounded-lg px-3 py-1.5">
           고객 화면으로 전환
         </button>

@@ -1,5 +1,5 @@
 // lib/api.ts
-const API_BASE = "http://192.168.35.41:8000"; // 본인 IP로 확인 후 교체
+const API_BASE = "http://localhost:8000"; // 본인 IP로 확인 후 교체
 
 export type RiskSummaryResponse = {
   total_variable_rate_borrowers: number;
