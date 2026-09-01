@@ -5,6 +5,14 @@
 
 ---
 
+## 📺 데모 영상
+
+[![KB 밸런스 데모 영상](https://img.shields.io/badge/Demo-Google%20Drive-blue?style=for-the-badge&logo=google-drive)](https://drive.google.com/file/d/1_Ma7fOGy3maKAL4xAcU-96eM1XNUeCOI/view?usp=sharing)
+
+> 페르소나 선택 → 금융업권 연결 → 리스크 진단 → 대시보드 → 금리 스트레스 테스트 → 추천 자산배분 → KB 상품 매칭
+
+---
+
 ## 소개
 
 **KB 밸런스**는 자산·부채·소득을 하나의 순자산 최적화 문제로 통합하는 AI 기반 금융 라이프 에이전트입니다.
@@ -318,3 +326,10 @@ npm run dev
 | 외부 API | 한국은행 ECOS (817Y002), 네이버뉴스 검색 |
 | 통계 | statsmodels 0.14, pandas 2.3 |
 
+---
+
+## GitHub
+
+```
+https://github.com/EllieSoominKim/kb-balance
+```
